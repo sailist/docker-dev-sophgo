@@ -1,5 +1,7 @@
 container_exists=$(docker ps -a --filter "name=tpu-mlir-dev-main" --format "{{.Names}}")
 
+
+
 echo "recreate docker container"
 # 如果容器存在，则删除
 if [[ ! -z $container_exists ]]; then

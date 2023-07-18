@@ -2,12 +2,13 @@ FROM sophgo/tpuc_dev:latest
 
 # configure custom environment
 ARG USER_HOME
+ARG USER
 
-RUN useradd -ms /bin/bash haozhe && usermod -aG sudo haozhe && echo 'haozhe ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN useradd -ms /bin/bash ${USER} && usermod -aG sudo ${USER} && echo '${USER} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
 
 # configure passwd
 RUN echo 'root:admin123' | chpasswd
-RUN echo 'haozhe:admin123' | chpasswd
+RUN echo '${USER}:admin123' | chpasswd
 
 # configure login info
 RUN touch /etc/motd
@@ -33,8 +34,8 @@ RUN mkdir -p ${USER_HOME}/.ssh && \
     chmod 600 ${USER_HOME}/.ssh/id_rsa.pub && \
     cat /tmp/id_rsa.pub >> ${USER_HOME}/.ssh/authorized_keys && \
     chmod 600 ${USER_HOME}/.ssh/authorized_keys && \
-    chown haozhe ${USER_HOME}/.ssh/authorized_keys && \
-    chown haozhe -R ${USER_HOME}/.ssh/ && \
+    chown ${USER} ${USER_HOME}/.ssh/authorized_keys && \
+    chown ${USER} -R ${USER_HOME}/.ssh/ && \
     rm /tmp/id_rsa.pub
 EXPOSE 22
 
@@ -49,7 +50,7 @@ EXPOSE 10002
 EXPOSE 10003
 
 
-USER haozhe
+USER ${USER}
 RUN git config --global http.sslVerify false
 
 # start ssh when docker started

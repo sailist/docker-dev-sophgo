@@ -1,9 +1,9 @@
 FROM sophgo/tpuc_dev:latest
 
-# configure custom environment
 ARG USER_HOME
 ARG USER
 
+# configure user login
 RUN useradd -ms /bin/bash ${USER} && usermod -aG sudo ${USER} && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # configure passwd
@@ -14,13 +14,10 @@ RUN echo "${USER}:admin123" | chpasswd
 RUN touch /etc/motd
 
 # configure ssh auto login
-
 RUN apt-get update 
 RUN apt-get install -y tmux openssh-server openssh-client 
 RUN mkdir /var/run/sshd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
-
-
 
 RUN mkdir -p ${USER_HOME}/.ssh
 COPY id_rsa.pub /tmp/id_rsa.pub
@@ -29,8 +26,6 @@ RUN cat /tmp/id_rsa.pub >> ${USER_HOME}/.ssh/authorized_keys && \
     chown ${USER}:${USER} ${USER_HOME}/.ssh/authorized_keys && \
     rm /tmp/id_rsa.pub
 COPY ecdsa_key.pub /etc/ssh/ssh_host_ecdsa_key.pub
-
-RUN echo 'source /workspace/vscode_workspace/expose_func.sh' >> ${USER_HOME}/.bashrc
 
 EXPOSE 22
 
@@ -45,10 +40,19 @@ EXPOSE 10002
 EXPOSE 10003
 
 
+# custom environment
+RUN echo 'source /workspace/vscode_workspace/expose_func.sh' >> ${USER_HOME}/.bashrc
+
+
 # configure git
+## lfs
 RUN apt-get install -y git-lfs
+
+## disable ssh verify (for gerrit)
 RUN git config --global http.sslVerify false
 
+## configure git auto completion
+RUN apt-get install git-core bash-completion
 
 # start ssh when docker started
 CMD ["/usr/sbin/sshd", "-D"]

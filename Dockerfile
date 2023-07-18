@@ -4,13 +4,13 @@ FROM sophgo/tpuc_dev:latest
 ARG USER_HOME
 ARG USER
 
-RUN useradd -ms /bin/bash ${USER} && usermod -aG sudo ${USER} && echo '${USER} ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers
+RUN useradd -ms /bin/bash ${USER} && usermod -aG sudo ${USER} && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
 # configure passwd
 RUN echo 'root:admin123' | chpasswd
-RUN echo '${USER}:admin123' | chpasswd
+RUN echo "${USER}:admin123" | chpasswd
 
-# configure login info
+# # configure login info
 RUN touch /etc/motd
 
 # configure ssh auto login
@@ -20,23 +20,18 @@ RUN apt-get install -y tmux openssh-server openssh-client
 RUN mkdir /var/run/sshd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
-RUN apt-get install -y git-lfs
 
-COPY ssh-config/id_rsa ${USER_HOME}/.ssh/id_rsa
-COPY ssh-config/id_rsa.pub ${USER_HOME}/.ssh/id_rsa.pub
+
+RUN mkdir -p ${USER_HOME}/.ssh
 COPY id_rsa.pub /tmp/id_rsa.pub
-# COPY root-ssh/ /etc/ssh/
+RUN cat /tmp/id_rsa.pub >> ${USER_HOME}/.ssh/authorized_keys && \
+    chmod 600 ${USER_HOME}/.ssh/authorized_keys && \
+    chown ${USER}:${USER} ${USER_HOME}/.ssh/authorized_keys && \
+    rm /tmp/id_rsa.pub
+COPY ecdsa_key.pub /etc/ssh/ssh_host_ecdsa_key.pub
 
 RUN echo 'source /workspace/vscode_workspace/expose_func.sh' >> ${USER_HOME}/.bashrc
 
-RUN mkdir -p ${USER_HOME}/.ssh && \ 
-    chmod 600 ${USER_HOME}/.ssh/id_rsa && \
-    chmod 600 ${USER_HOME}/.ssh/id_rsa.pub && \
-    cat /tmp/id_rsa.pub >> ${USER_HOME}/.ssh/authorized_keys && \
-    chmod 600 ${USER_HOME}/.ssh/authorized_keys && \
-    chown ${USER} ${USER_HOME}/.ssh/authorized_keys && \
-    chown ${USER} -R ${USER_HOME}/.ssh/ && \
-    rm /tmp/id_rsa.pub
 EXPOSE 22
 
 # EXPOSE dev port
@@ -50,8 +45,10 @@ EXPOSE 10002
 EXPOSE 10003
 
 
-USER ${USER}
+# configure git
+RUN apt-get install -y git-lfs
 RUN git config --global http.sslVerify false
+
 
 # start ssh when docker started
 CMD ["/usr/sbin/sshd", "-D"]

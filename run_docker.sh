@@ -1,2 +1,2 @@
 docker restart tpu-mlir-dev-main
-docker exec -u haozhe -it tpu-mlir-dev-main /bin/bash
+docker exec -u $USER -it tpu-mlir-dev-main /bin/bash

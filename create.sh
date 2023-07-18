@@ -12,7 +12,7 @@ docker run -d --privileged \
     -p 0.0.0.0:8124:22 \
     -p 0.0.0.0:10124:10000 \
     -v $HOME/code:/workspace \
-    -v $HOME/.vscode-server:/home/haozhe/.vscode-server \
-    -v $HOME/.local/lib/python3.8/site-packages:/home/haozhe/.local/lib/python3.8/site-packages \
+    -v $HOME/.vscode-server:$HOME/.vscode-server \
+    -v $HOME/.local/lib/python3.8/site-packages:$HOME/.local/lib/python3.8/site-packages \
     --name tpu-mlir-dev-main tpu-mlir-custom
 

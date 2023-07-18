@@ -5,8 +5,8 @@ if [ ! -f "ssh-config/id_rsa" ]; then
 fi
 
 sudo cp -r /etc/ssh/*key*  ./root-ssh
+sudo chown $USER -R ./
 
-sudo chown haozhe -R ./
 # CURDATE=$(date +"%y%m%d%H%M")
 docker build --build-arg USER_HOME=$HOME --build-arg USER=$USER -t tpu-mlir-custom:latest .
 

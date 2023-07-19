@@ -2,6 +2,8 @@ FROM sophgo/tpuc_dev:latest
 
 ARG USER_HOME
 ARG USER
+ARG GIT_USER
+ARG GIT_EMAIL
 
 # configure user login
 RUN useradd -ms /bin/bash ${USER} && usermod -aG sudo ${USER} && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -49,10 +51,15 @@ RUN echo 'source /workspace/vscode_workspace/expose_func.sh' >> ${USER_HOME}/.ba
 RUN apt-get install -y git-lfs
 
 ## disable ssh verify (for gerrit)
-RUN git config --global http.sslVerify false
-
-## configure git auto completion
 RUN apt-get install git-core bash-completion
+
+USER ${USER}
+## name/email config
+RUN git config --global user.name $GIT_USER
+RUN git config --global user.email $GIT_EMAIL
+RUN git config --global http.sslVerify false
+USER root
+
 
 # start ssh when docker started
 CMD ["/usr/sbin/sshd", "-D"]

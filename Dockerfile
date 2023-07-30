@@ -8,26 +8,29 @@ ARG GIT_EMAIL
 # configure user login
 RUN useradd -ms /bin/bash ${USER} && usermod -aG sudo ${USER} && echo "${USER} ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# configure passwd
+## configure passwd
 RUN echo 'root:admin123' | chpasswd
 RUN echo "${USER}:admin123" | chpasswd
 
-# # configure login info
+
+# 
+RUN apt-get update 
+
+
+## configure login info
 RUN touch /etc/motd
 
 # configure ssh auto login
-RUN apt-get update 
-RUN apt-get install -y tmux openssh-server openssh-client 
+RUN apt-get install -y openssh-server openssh-client 
 RUN mkdir /var/run/sshd
 RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
+USER ${USER}
 RUN mkdir -p ${USER_HOME}/.ssh
 COPY id_rsa.pub /tmp/id_rsa.pub
 RUN cat /tmp/id_rsa.pub >> ${USER_HOME}/.ssh/authorized_keys && \
-    chmod 600 ${USER_HOME}/.ssh/authorized_keys && \
-    chown ${USER}:${USER} ${USER_HOME}/.ssh/authorized_keys && \
-    rm /tmp/id_rsa.pub
-COPY ecdsa_key.pub /etc/ssh/ssh_host_ecdsa_key.pub
+    chmod 600 ${USER_HOME}/.ssh/authorized_keys
+USER root
 
 EXPOSE 22
 
@@ -60,6 +63,8 @@ RUN git config --global user.email $GIT_EMAIL
 RUN git config --global http.sslVerify false
 USER root
 
+# configure clang compilation
+# RUN apt install clang
 
 # start ssh when docker started
 CMD ["/usr/sbin/sshd", "-D"]

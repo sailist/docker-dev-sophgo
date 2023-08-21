@@ -1,4 +1,4 @@
-FROM sophgo/tpuc_dev:latest
+FROM sophgo/tpuc_dev:v3.0
 
 ARG USER_HOME
 ARG USER
@@ -64,7 +64,11 @@ RUN git config --global http.sslVerify false
 USER root
 
 # configure clang compilation
-# RUN apt install clang
+RUN apt install clang
+
+
+# 
+
 
 # start ssh when docker started
 CMD ["/usr/sbin/sshd", "-D"]

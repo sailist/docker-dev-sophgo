@@ -15,5 +15,5 @@ docker build \
 --build-arg USER=$USER \
 --build-arg GIT_USER=$GIT_USER \
 --build-arg GIT_EMAIL=$GIT_EMAIL \
--t tpu-mlir-custom:latest .
+-t tpu-mlir-custom:v3.0 .
 

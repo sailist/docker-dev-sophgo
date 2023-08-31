@@ -1,4 +1,5 @@
-FROM sophgo/tpuc_dev:v3.0
+FROM sophgo/tpuc_dev:v3.1
+# FROM sophgo/tpuc_dev:v2.1
 
 ARG USER_HOME
 ARG USER
@@ -57,14 +58,15 @@ RUN apt-get install -y git-lfs
 RUN apt-get install git-core bash-completion
 
 USER ${USER}
-## name/email config
+## name/email password config
 RUN git config --global user.name $GIT_USER
 RUN git config --global user.email $GIT_EMAIL
 RUN git config --global http.sslVerify false
+RUN git config --global credential.helper store
 USER root
 
 # configure clang compilation
-RUN apt install clang
+# RUN apt install clang
 
 
 # 

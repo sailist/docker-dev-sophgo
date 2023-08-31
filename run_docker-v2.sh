@@ -1,0 +1,1 @@
+docker exec -u $USER -it tpu-mlir-dev-v2.1 /bin/bash || (docker restart tpu-mlir-dev-v2.1 && docker exec -u $USER -it tpu-mlir-dev-v2.1 /bin/bash)

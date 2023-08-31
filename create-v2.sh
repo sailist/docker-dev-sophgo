@@ -1,10 +1,10 @@
 if [ $# -gt 0 ]; then
   CNAME=$1
 else
-  CNAME=tpu-mlir-dev-main
+  CNAME=tpu-mlir-dev-v2.1
 fi
 
-WORKSPACE_DIR=$HOME
+WORKSPACE_DIR=$HOME/code
 
 container_exists=$(docker ps -a --filter "name=$CNAME" --format "{{.Names}}")
 
@@ -18,13 +18,13 @@ if [ ! -d "~/.vscode-server-docker" ]; then
     cp -r ~/.vscode-server ~/.vscode-server-docker
 fi
 
+
 docker run -d --privileged \
-    -p 0.0.0.0:8124:22 \
-    -p 0.0.0.0:10124:10000 \
+    -p 0.0.0.0:8125:22 \
+    -p 0.0.0.0:10125:10000 \
     --ipc=host \
     -v $WORKSPACE_DIR:/workspace \
     -v $HOME/.vscode-server-docker:$HOME/.vscode-server \
     -v $HOME/.vscode-server-docker:/root/.vscode-server \
     -v $HOME/.local/lib:$HOME/.local/lib \
-    --name $CNAME tpu-mlir-custom:v3.0
-
+    --name $CNAME tpu-mlir-custom:v2.1

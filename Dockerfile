@@ -29,8 +29,8 @@ RUN sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/
 USER ${USER}
 RUN mkdir -p ${USER_HOME}/.ssh
 COPY id_rsa.pub /tmp/id_rsa.pub
-RUN cat /tmp/id_rsa.pub >> ${USER_HOME}/.ssh/authorized_keys && \
-    chmod 600 ${USER_HOME}/.ssh/authorized_keys
+COPY .vimrc /home/${USER}/.vimrc
+COPY authorized_keys ${USER_HOME}/.ssh/authorized_keys
 USER root
 
 EXPOSE 22
@@ -63,14 +63,10 @@ RUN git config --global user.name $GIT_USER
 RUN git config --global user.email $GIT_EMAIL
 RUN git config --global http.sslVerify false
 RUN git config --global credential.helper store
+### support utf-8 log
+RUN git config --global core.quotepath off 
+
 USER root
-
-# configure clang compilation
-# RUN apt install clang
-
-
-# 
-
 
 # start ssh when docker started
 CMD ["/usr/sbin/sshd", "-D"]

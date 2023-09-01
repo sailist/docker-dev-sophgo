@@ -4,7 +4,7 @@ if [ ! -f "ssh-config/id_rsa" ]; then
     ssh-keygen -t rsa -b 4096 -f ssh-config/id_rsa
 fi
 
-touch id_rsa.pub
+cp $HOME/.ssh/authorized_keys ./authorized_keys
 
 GIT_USER=$(git config --get user.name)
 GIT_EMAIL=$(git config --get user.email)
